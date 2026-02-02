@@ -4,56 +4,84 @@
     {
         static void Main(string[] args)
         {
-            Dictionary<string, List<string>> graph = new Dictionary<string, List<string>>();
-            graph["Me"] = new List<string> { "Alice", "Bob", "Clar" };
-            graph["Bob"] = new List<string> { "Anuj", "Peggi" };
-            graph["Alice"] = new List<string> { "Peggi" };
-            graph["Clar"] = new List<string> { "Tom", "Jhonny" };
-            graph["Anuj"] = new List<string>();
-            graph["Peggi"] = new List<string>();
-            graph["Tom"] = new List<string>();
-            graph["Jhonny"] = new List<string>();
-
-            foreach (var node in graph)
+            Dictionary<string, List<string>> graph = new Dictionary<string, List<string>>
             {
-                Console.WriteLine($"{node.Key}: {string.Join(", ", node.Value)}");
-            }
+                ["You"] = new List<string> { "Alice", "Bob", "Claire" },
+                ["Bob"] = new List<string> { "Anuj", "Peggy" },
+                ["Alice"] = new List<string> { "Peggy" },
+                ["Claire"] = new List<string> { "Tom", "Jhonny" },
+                ["Anuj"] = new List<string>(),
+                ["Peggy"] = new List<string>(),
+                ["Tom"] = new List<string>(),
+                ["Jhonny"] = new List<string>()
+            };
 
-            Queue<string> searchQueue = new Queue<string>(graph["Me"]);
+            Console.WriteLine(HasConnection(graph, "You", "Peggy"));
+            Console.WriteLine(FindConnectionLength(graph, "You", "Peggy"));
+        }
 
-            List<string> searched = new List<string>();
+        static bool HasConnection(Dictionary<string, List<string>> graph, string startPerson, string targetPerson)
+        {
+            HashSet<string> visited = new();
 
-            while (searchQueue.Count > 0)
+            Queue<string> queue = new Queue<string>(graph[startPerson]);
+
+            while (queue.Count > 0)
             {
-                string person = searchQueue.Dequeue();
-
-                if (!searched.Contains(person))
+                string person = queue.Dequeue();
+                if (!visited.Contains(person))
                 {
-                    Console.WriteLine($"Проверяем {person}...");
-
-                    if (PersonIsSeller(person))
+                    Console.WriteLine($"Проверяем {person}");
+                    if (person == targetPerson)
                     {
-                        Console.WriteLine($"Найден продавец манго: {person}");
-                        return;
+                        return true;
                     }
                     else
                     {
                         foreach (var friend in graph[person])
                         {
-                            searchQueue.Enqueue(friend);
+                            queue.Enqueue(friend);
                         }
 
-                        searched.Add(person);
+                        visited.Add(person);
                     }
                 }
             }
 
-            Console.WriteLine("Продавец манго не найден!");
+            return false;
         }
 
-        static bool PersonIsSeller(string name)
+        static int FindConnectionLength(Dictionary<string, List<string>> graph, string startPerson, string endPerson)
         {
-            return name.EndsWith("m", StringComparison.OrdinalIgnoreCase);
+            Queue<(string person, int distance)> queue = new Queue<(string, int)>();
+            HashSet<string> visited = new HashSet<string>();
+
+            queue.Enqueue((startPerson, 0));
+            visited.Add(startPerson);
+            
+            while (queue.Count> 0)
+            {
+                var (currentPerson, currentDistance) = queue.Dequeue();
+
+                Console.WriteLine($"Проверяем {currentPerson} расстояние: {currentDistance}...");
+                if (currentPerson == endPerson)
+                {
+                    return currentDistance;
+                }
+                else
+                {
+                    foreach (var friend in graph[currentPerson])
+                    {
+                        if (!visited.Contains(friend))
+                        {
+                            queue.Enqueue((friend, currentDistance + 1));
+                            visited.Add(friend);
+                        }                        
+                    }                    
+                }
+            }
+
+            return -1;
         }
     }
 }
