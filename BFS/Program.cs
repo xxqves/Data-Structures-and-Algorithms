@@ -61,7 +61,7 @@
 
             int distance = 0;
 
-            while (queue.Count> 0)
+            while (queue.Count > 0)
             {
                 for (int i = 0; i < queue.Count; i++)
                 {
