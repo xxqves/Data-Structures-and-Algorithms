@@ -53,32 +53,39 @@
 
         static int FindConnectionLength(Dictionary<string, List<string>> graph, string startPerson, string endPerson)
         {
-            Queue<(string person, int distance)> queue = new Queue<(string, int)>();
+            Queue<string> queue = new Queue<string>();
             HashSet<string> visited = new HashSet<string>();
 
-            queue.Enqueue((startPerson, 0));
+            queue.Enqueue(startPerson);
             visited.Add(startPerson);
-            
+
+            int distance = 0;
+
             while (queue.Count> 0)
             {
-                var (currentPerson, currentDistance) = queue.Dequeue();
+                for (int i = 0; i < queue.Count; i++)
+                {
+                    string currentPerson = queue.Dequeue();
 
-                Console.WriteLine($"Проверяем {currentPerson} расстояние: {currentDistance}...");
-                if (currentPerson == endPerson)
-                {
-                    return currentDistance;
-                }
-                else
-                {
-                    foreach (var friend in graph[currentPerson])
+                    Console.WriteLine($"Проверяем {currentPerson} расстояние: {distance}...");
+                    if (currentPerson == endPerson)
                     {
-                        if (!visited.Contains(friend))
+                        return distance;
+                    }
+                    else
+                    {
+                        foreach (var friend in graph[currentPerson])
                         {
-                            queue.Enqueue((friend, currentDistance + 1));
-                            visited.Add(friend);
-                        }                        
-                    }                    
+                            if (!visited.Contains(friend))
+                            {
+                                queue.Enqueue(friend);
+                                visited.Add(friend);
+                            }
+                        }
+                    }
                 }
+
+                distance++;
             }
 
             return -1;
