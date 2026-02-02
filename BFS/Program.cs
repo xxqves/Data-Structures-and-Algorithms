@@ -16,7 +16,7 @@
                 ["Jhonny"] = new List<string>()
             };
 
-            Console.WriteLine(HasConnection(graph, "You", "Peggy"));
+            //Console.WriteLine(HasConnection(graph, "You", "Peggy"));
             Console.WriteLine(FindConnectionLength(graph, "You", "Peggy"));
         }
 
@@ -63,7 +63,9 @@
 
             while (queue.Count > 0)
             {
-                for (int i = 0; i < queue.Count; i++)
+                int level = queue.Count;
+
+                for (int i = 0; i < level; i++)
                 {
                     string currentPerson = queue.Dequeue();
 
@@ -72,15 +74,13 @@
                     {
                         return distance;
                     }
-                    else
+
+                    foreach (var friend in graph[currentPerson])
                     {
-                        foreach (var friend in graph[currentPerson])
+                        if (!visited.Contains(friend))
                         {
-                            if (!visited.Contains(friend))
-                            {
-                                queue.Enqueue(friend);
-                                visited.Add(friend);
-                            }
+                            queue.Enqueue(friend);
+                            visited.Add(friend);
                         }
                     }
                 }
