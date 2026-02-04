@@ -2,7 +2,7 @@
 
 namespace CustomGraph
 {
-    internal class WeightedGraph<T> where T: IEquatable<T>
+    internal class WeightedGraph<T> where T : IEquatable<T>
     {
         private Dictionary<T, List<Edge<T>>> _adjacencyList;
 
